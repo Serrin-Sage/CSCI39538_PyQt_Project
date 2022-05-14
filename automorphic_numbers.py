@@ -1,6 +1,3 @@
-"""
-PyQt5 GUI
-"""
 
 import sys
 from PyQt5.QtWidgets import QApplication
