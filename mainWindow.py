@@ -14,6 +14,8 @@ import sys
 class PrimeNumGen(QWidget):
     def __init__(self):
         super().__init__()
+
+        # Layout
         self.setLayout(QVBoxLayout())
 
         # Title
@@ -67,7 +69,8 @@ class PrimeNumGen(QWidget):
         self.layout().addWidget(generate_btn)
 
         # reset button to reset the game, adding action to reset button
-        reset_game = QPushButton("Reset", clicked=lambda: reset_action())
+        reset_game = QPushButton(
+            "Reset", clicked=lambda: reset_action(self))
         self.layout().addWidget(reset_game)
 
         # setting geometry to the push button
@@ -90,7 +93,7 @@ class PrimeNumGen(QWidget):
         self.listWidget = QListWidget()
 
         def reset_action(self):
-            # making label green
+
             self.label.setStyleSheet("QLabel"
                                      "{"
                                      "border : 2px solid black;"
@@ -99,6 +102,12 @@ class PrimeNumGen(QWidget):
 
             # setting text to the info label
             self.label.setText("Reset...Enter a number")
+
+            # empty output box
+            self.listWidget.clear()
+
+            # clear entry box
+            entry_box.clear()
 
         def primeNumberGenerator():
 
@@ -133,7 +142,7 @@ class AutoMorphGen(QMainWindow):
         super().__init__()
         self._model = model
         self.setWindowTitle("Automorphic Numbers")
-        self.setGeometry(100, 100, 340, 350)
+        self.setGeometry(200, 200, 400, 400)
         self.general_layout = QVBoxLayout()
         self._central_widget = QWidget(self)
         self.setCentralWidget(self._central_widget)

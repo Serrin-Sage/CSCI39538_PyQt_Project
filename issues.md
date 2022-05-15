@@ -23,3 +23,4 @@ This fixed the problem instantly the ANG can now be used when its button is clic
 ### Minor issues encountered:
 * text being cut off on screen, fixed by implementation of an update function which resized the text.
 * testing with QtDesigner seemed more problematic than helpful.
+* reset button PNG crashes the application, no fix has been made yet
