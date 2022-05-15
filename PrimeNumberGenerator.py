@@ -67,7 +67,8 @@ class MainWindow(qtw.QWidget):
         self.layout().addWidget(generate_btn)
 
         # reset button to reset the game, adding action to reset button
-        reset_game = qtw.QPushButton("Reset", clicked=lambda: reset_action())
+        reset_game = qtw.QPushButton(
+            "Reset", clicked=lambda: reset_action(self))
         self.layout().addWidget(reset_game)
 
         # setting geometry to the push button
@@ -90,7 +91,7 @@ class MainWindow(qtw.QWidget):
         self.listWidget = qtw.QListWidget()
 
         def reset_action(self):
-            # making label green
+
             self.label.setStyleSheet("QLabel"
                                      "{"
                                      "border : 2px solid black;"
@@ -99,6 +100,12 @@ class MainWindow(qtw.QWidget):
 
             # setting text to the info label
             self.label.setText("Reset...Enter a number")
+
+            # empty output box
+            self.listWidget.clear()
+
+            # clear entry box
+            entry_box.clear()
 
         def primeNumberGenerator():
 
