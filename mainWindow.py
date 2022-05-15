@@ -129,8 +129,9 @@ ERROR_MSG = "ERROR"
 
 class AutoMorphGen(QMainWindow):
 
-    def __init__(self):
+    def __init__(self, model):
         super().__init__()
+        self._model = model
         self.setWindowTitle("Automorphic Numbers")
         self.setGeometry(100, 100, 340, 350)
         self.general_layout = QVBoxLayout()
@@ -139,10 +140,11 @@ class AutoMorphGen(QMainWindow):
         self._central_widget.setLayout(self.general_layout)
         self._create_display_input()
         self._create_buttons()
+        self._connect_signals()
 
     def _create_display_input(self):
         self.display_input1 = QLineEdit()
-        self.display_input1.setFixedHeight(35)
+        self.display_input1.setGeometry(100, 100, 340, 350)
         self.display_input1.setAlignment(Qt.AlignLeft)
         self.general_layout.addWidget(self.display_input1)
 
@@ -181,32 +183,25 @@ class AutoMorphGen(QMainWindow):
     def clear_display_input(self):
         self.set_display_input_text("")
 
-class PyQtUICtrl:
-
-    def __init__(self, model, view):
-        self._model = model
-        self._view = view
-        self._connect_signals()
-
     def _calculate(self):
-        result = self._model(n = self._view.show_display_input_text())
-        self._view.set_display_input_text(result)
+        result = self._model(n = self.show_display_input_text())
+        self.set_display_input_text(result)
 
     def _build_num(self, n_more):
-        if self._view.show_display_input_text() == ERROR_MSG:
-            self._view.clear_display_input()
+        if self.show_display_input_text() == ERROR_MSG:
+            self.clear_display_input()
 
-        n = self._view.show_display_input_text() + n_more
-        self._view.set_display_input_text(n)
+        n = self.show_display_input_text() + n_more
+        self.set_display_input_text(n)
 
     def _connect_signals(self):
-        for btn_text, btn in self._view.buttons.items():
+        for btn_text, btn in self.buttons.items():
             if btn_text not in {"Enter", "Clear"}:
                 btn.clicked.connect(partial(self._build_num, btn_text))
 
-        self._view.buttons["Enter"].clicked.connect(self._calculate)
-        self._view.display_input1.returnPressed.connect(self._calculate)
-        self._view.buttons["Clear"].clicked.connect(self._view.clear_display_input)
+        self.buttons["Enter"].clicked.connect(self._calculate)
+        self.display_input1.returnPressed.connect(self._calculate)
+        self.buttons["Clear"].clicked.connect(self.clear_display_input)
 
 def automorphic_number_calculate(n):
 
@@ -227,24 +222,25 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.window1 = PrimeNumGen()
-        self.window2 = AutoMorphGen()
+        model = automorphic_number_calculate
+        self.window2 = AutoMorphGen(model)
         self.setWindowTitle("Recreational Math Selector")
         self.setGeometry(200, 200, 400, 400)
-        l = QVBoxLayout()
+        layout = QVBoxLayout()
         button1 = QPushButton("Prime Gen")
         button2 = QPushButton("AutoMorph Gen")
         button1.clicked.connect(
             lambda checked: self.toggle_window(self.window1)
         )
-        l.addWidget(button1)
+        layout.addWidget(button1)
         button2.clicked.connect(
             lambda checked: self.toggle_window(self.window2)
         )
-        l.addWidget(button2)
+        layout.addWidget(button2)
 
-        w = QWidget()
-        w.setLayout(l)
-        self.setCentralWidget(w)
+        widget = QWidget()
+        widget.setLayout(layout)
+        self.setCentralWidget(widget)
         self.initUI()
 
     def initUI(self):
@@ -264,8 +260,11 @@ class MainWindow(QMainWindow):
         self.label.adjustSize()
 
 
-app = QApplication(sys.argv)
-Main = MainWindow()
-Main.show()
+def main():
+    app = QApplication(sys.argv)
+    Main = MainWindow()
+    Main.show()
+    sys.exit(app.exec())
 
-sys.exit(app.exec())
+if __name__ == "__main__":
+    main()
