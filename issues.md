@@ -1,4 +1,4 @@
-#Encountered Problems
+# Encountered Problems
 
 **NOTE:** All issues were discussed via ```Discord```, we did not submit issue tickets with GitHub.
 If there was a problem the Discord group would be messaged and we would resolve it through clear communication.  
@@ -20,6 +20,6 @@ it would show the window for the ANG but you could not use any of the widgets. I
 This fixed the problem instantly the ANG can now be used when its button is clicked on the main window.
 
 
-###Minor issues encountered:
+### Minor issues encountered:
 * text being cut off on screen, fixed by implementation of an update function which resized the text.
 * testing with QtDesigner seemed more problematic than helpful.

@@ -3,7 +3,7 @@ This repo will be used for the PyQt Hw in CSCI39538.
 
 <ins>Group Members:</ins> Serrin, Perla, Lauren, Aaron
 
-##Description:
+## Description:
 The goal of this project was to make a Recreational Math Selector. A main window will appear and different recreational
 math problems can be selected. The two that were implemented were Prime Number Generator and Automorphic Number Generator.
 Each were coded separately and then combined in the main window. The generators are hidden until their corresponding button
