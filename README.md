@@ -1,6 +1,8 @@
 # CSCI39538_PyQt_Project
 This repo will be used for the PyQt Hw in CSCI39538.
 
+<ins>Group Members:</ins> Serrin, Perla, Lauren, Aaron
+
 ```mainWindow.py``` contains code to run the Recreational Math Selector. From the main window
 you can select which Recreational Math Problem to run.
 
