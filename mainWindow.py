@@ -212,7 +212,7 @@ def automorphic_number_calculate(n):
         if last_digits == n:
             result = f"Automorphic number. {n} squared is {square_num}."
         else:
-            result = f"Not a automorphic number. {n} squared is {square_num}."
+            result = f"Not an automorphic number. {n} squared is {square_num}."
     except Exception:
         result = ERROR_MSG
     return result
