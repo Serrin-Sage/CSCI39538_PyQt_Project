@@ -1,6 +1,6 @@
 # Encountered Problems
 
-**NOTE:** All issues were discussed via ```Discord```, we did not submit issue tickets with GitHub.
+**NOTE:** Not all issuse were dealt with via issue tickets on GitHub, most were discussed via ```Discord```.
 If there was a problem the Discord group would be messaged and we would resolve it through clear communication.  
 
 * First problem encountered was figuring out the logic for hiding widget windows. At first two blank windows were used to test.
@@ -12,6 +12,11 @@ A function was written to act as a boolean value for the window, hide or show. U
 It was decided that each Rec Math Generator would be written separately and then would be added into the main window after we knew the individual generator worked.
 The second blank window was used a test for the Prime Number Generator (PNG). The second window code was replaced by the PNG
 This worked pretty well, the PNG showed up on click of the PNG button on the main window.
+
+  * An issues occurred while adding the PNG to the main window. Upon pressing 'reset' the app would crash.
+  This was fixed by adding a positional argument ```'self'``` to ```reset_action()```. Also the definition of
+  ``reset_action()`` was updated to include ``self.listWidget.clear()`` to empty the output box and 
+  ```entry_box.clear()``` to clear the entry box.
 
 
 * Third issue encountered was incorporating the Automorphic Number Generator (ANG). At first we thought it could be added just like the PNG, unfortunately that was not the case.
