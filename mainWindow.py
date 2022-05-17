@@ -13,9 +13,7 @@ class Kaprekar(QWidget):
 
         self.setWindowTitle("Kaprekar's Constant")
 
-        # self.show()
-
-        self.intro_label = QLabel("\n 6174 is a very special number!\n\nDo you want to see why?\n", self)
+        self.intro_label = QLabel("\nFind out why 6174\nis a special number.\n", self)
         self.intro_label.setAlignment(Qt.AlignCenter)
         self.intro_label.setStyleSheet("QLabel"
             "{"
@@ -43,14 +41,37 @@ class Kaprekar(QWidget):
         self.layout().addWidget(self.entry_button)
 
     def enter(self):
-        self.entry_box.hide()
-        self.entry_button.hide()
+        entry = self.entry_box.displayText()
 
-        self.number = int(self.entry_box.displayText())
-        self.entry_label.setAlignment(Qt.AlignRight)
-        self.entry_label.setText(f'Starting number = {self.number}')
+        def threeRepeating():
+            count = {}
 
-        self.cycle()
+            for digit in entry:
+              if digit in count:
+                count[digit] += 1
+                if count[digit] > 2:
+                  return True
+              else:
+                count[digit] = 1
+            return False
+
+        if len(entry) == 4 and entry.isdigit():
+            color_black = QGraphicsColorizeEffect()
+            color_black.setColor(Qt.black)
+            self.entry_label.setGraphicsEffect(color_black)
+            if threeRepeating():
+                self.entry_label.setText(f'Three digits cannot repeat.')
+                color_red = QGraphicsColorizeEffect()
+                color_red.setColor(Qt.red)
+                self.entry_label.setGraphicsEffect(color_red)
+            else:
+                self.entry_box.hide()
+                self.entry_button.hide()
+                self.number = int(self.entry_box.displayText())
+                self.entry_label.setAlignment(Qt.AlignRight)
+                self.entry_label.setText(f'Starting number = {self.number}')
+
+                self.cycle()
 
     def cycle(self):
         self.decreasing_button = QPushButton(f'Sort {self.number} in decreasing order')
