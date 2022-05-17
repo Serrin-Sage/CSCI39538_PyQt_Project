@@ -1,14 +1,110 @@
-import PyQt5
-from PyQt5 import QtGui
-from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QMainWindow
 from functools import partial
 import automorphic_numbers
 import sys
+
+class Kaprekar(QWidget):
+    def __init__(self):
+        super().__init__()
+
+        self.setLayout(QVBoxLayout())
+
+        self.setWindowTitle("Kaprekar's Constant")
+
+        # self.show()
+
+        self.intro_label = QLabel("\n 6174 is a very special number!\n\nDo you want to see why?\n", self)
+        self.intro_label.setAlignment(Qt.AlignCenter)
+        self.intro_label.setStyleSheet("QLabel"
+            "{"
+                "border: 2px solid black;"
+                "background: white;"
+            "}"
+        )
+        self.layout().addWidget(self.intro_label)
+
+        self.intro_button = QPushButton('Start')
+        self.intro_button.clicked.connect(self.start)
+        self.layout().addWidget(self.intro_button)
+
+    def start(self):
+        self.intro_button.hide()
+
+        self.entry_label = QLabel('Think of a four-digit number:', self)
+        self.layout().addWidget(self.entry_label)
+
+        self.entry_box = QLineEdit()
+        self.layout().addWidget(self.entry_box)
+
+        self.entry_button = QPushButton('Enter')
+        self.entry_button.clicked.connect(self.enter)
+        self.layout().addWidget(self.entry_button)
+
+    def enter(self):
+        self.entry_box.hide()
+        self.entry_button.hide()
+
+        self.number = int(self.entry_box.displayText())
+        self.entry_label.setAlignment(Qt.AlignRight)
+        self.entry_label.setText(f'Starting number = {self.number}')
+
+        self.cycle()
+
+    def cycle(self):
+        self.decreasing_button = QPushButton(f'Sort {self.number} in decreasing order')
+        self.decreasing_button.clicked.connect(self.sortDecreasing)
+        self.layout().addWidget(self.decreasing_button)
+
+    def sortDecreasing(self):
+        self.decreasing_button.hide()
+
+        self.decreasing = int(''.join([str(digit) for digit in sorted([int(digit) for digit in str(self.number)], reverse=True)]))
+
+        text = f'   {self.decreasing}'
+        label = QLabel(text, self)
+        label.setAlignment(Qt.AlignRight)
+        self.layout().addWidget(label)
+
+        self.increasing_button = QPushButton(f'Sort {self.number} in increasing order')
+        self.increasing_button.clicked.connect(self.sortIncreasing)
+        self.layout().addWidget(self.increasing_button)
+
+    def sortIncreasing(self):
+        self.increasing_button.hide()
+
+        self.increasing = int(str(self.decreasing)[::-1])
+
+        text = '-  ' + str(self.increasing).rjust(4, ' ')
+        label = QLabel(text, self)
+        label.setAlignment(Qt.AlignRight)
+        self.layout().addWidget(label)
+
+        self.subtract_button = QPushButton(f'Subtract: {self.decreasing} - {self.increasing}')
+        self.subtract_button.clicked.connect(self.subtract)
+        self.layout().addWidget(self.subtract_button)
+
+    def subtract(self):
+        self.subtract_button.hide()
+
+        self.number = self.decreasing - self.increasing
+
+        text = f'Resulting number = {self.number}'
+        label = QLabel(text)
+        label.setAlignment(Qt.AlignRight)
+
+        if self.number == 6174:
+            label.setStyleSheet("QLabel"
+                "{"
+                    "border: 2px solid black;"
+                    "background: white;"
+                "}"
+            )
+            self.layout().addWidget(label)
+        else:
+            self.layout().addWidget(label)
+            self.cycle()
 
 #********** PRIME NUMBER GENERATOR ********#
 class PrimeNumGen(QWidget):
@@ -25,7 +121,7 @@ class PrimeNumGen(QWidget):
         self.setGeometry(200, 200, 400, 400)
 
         # font
-        font = QFont('Times', 14)
+        font = QFont('Helvetica', 14)
         font.setBold(True)
         font.setItalic(True)
         font.setUnderline(True)
@@ -46,7 +142,7 @@ class PrimeNumGen(QWidget):
         color.setColor(Qt.darkCyan)
 
         # setting font and alignment
-        self.label.setFont(QFont('Times', 13))
+        self.label.setFont(QFont('Helvetica', 13))
         self.label.setAlignment(Qt.AlignCenter)
 
         # setting style sheet
@@ -201,7 +297,7 @@ class AutoMorphGen(QMainWindow):
             self.clear_display_input()
 
         n = self.show_display_input_text() + n_more
-        self.set_display_input_text(n)
+        self.set_display_input_tex(n)
 
     def _connect_signals(self):
         for btn_text, btn in self.buttons.items():
@@ -230,44 +326,42 @@ def automorphic_number_calculate(n):
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.window1 = PrimeNumGen()
-        model = automorphic_number_calculate
-        self.window2 = AutoMorphGen(model)
-        self.setWindowTitle("Recreational Math Selector")
-        self.setGeometry(200, 200, 400, 400)
-        layout = QVBoxLayout()
-        button1 = QPushButton("Prime Gen")
-        button2 = QPushButton("AutoMorph Gen")
-        button1.clicked.connect(
-            lambda checked: self.toggle_window(self.window1)
-        )
-        layout.addWidget(button1)
-        button2.clicked.connect(
-            lambda checked: self.toggle_window(self.window2)
-        )
-        layout.addWidget(button2)
 
-        widget = QWidget()
-        widget.setLayout(layout)
+        widget = QWidget(self)
+
         self.setCentralWidget(widget)
-        self.initUI()
 
-    def initUI(self):
-        self.label = QtWidgets.QLabel(self)
-        self.label.setText("Welcome to Recreational Math Selector")
-        self.label.move(100, 100)
-        self.update()
+        layout = QVBoxLayout()
 
+        self.setWindowTitle("Cool Math Tricks")
+
+        self.title = QLabel('Select a math trick to start:', self)
+        self.title.setAlignment(Qt.AlignCenter)
+        layout.addWidget(self.title)
+
+        self.window1 = PrimeNumGen()
+        self.window2 = AutoMorphGen(automorphic_number_calculate)
+        self.window3 = Kaprekar()
+
+        button1 = QPushButton("Prime Number\nGenerator")
+        button2 = QPushButton("AutoMorphic Number\nGenerator")
+        button3 = QPushButton("Kaprekar's Constant")
+
+        button1.clicked.connect(lambda checked: self.toggle_window(self.window1))
+        button2.clicked.connect(lambda checked: self.toggle_window(self.window2))
+        button3.clicked.connect(lambda checked: self.toggle_window(self.window3))
+
+        layout.addWidget(button1)
+        layout.addWidget(button2)
+        layout.addWidget(button3)
+
+        widget.setLayout(layout)
 
     def toggle_window(self, window):
         if window.isVisible():
             window.hide()
         else:
             window.show()
-
-    def update(self):
-        self.label.adjustSize()
-
 
 def main():
     app = QApplication(sys.argv)
