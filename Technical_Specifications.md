@@ -19,3 +19,6 @@ PyQTUICtrl class automorphic_numbers_calculate model main function
 ``PrimeNumberGenerator.py``:
 Complete Prime Number App to view a list of primes based on user input. The user inputs a number and hits 'Generate'; this will generate all
 primes number up to and including the number inputted. The user can press 'Rest' to start the generator again. 
+
+``KaprekarsConstant.py``:
+This program takes a four-digit number and subtracts its ascending order form from its descending order form, repeating the process until consistently resulting in Kaprekar's Constant, the number 6174.
