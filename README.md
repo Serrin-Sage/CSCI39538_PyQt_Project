@@ -12,7 +12,7 @@ is pressed. Then the generators can be interacted with or closed. The entire pro
 ```mainWindow.py``` contains code to run the Recreational Math Selector. From the main window
 you can select which Recreational Math Problem to run.
 
-```PrimeNumbGenerator.py``` contains code that only runs the prime number generator
+```PrimeNumberGenerator.py``` contains code that only runs the prime number generator
 
 ```automorphic_numbers.py``` contains code that only runs the automorphic number generator
 

@@ -2,9 +2,10 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from functools import partial
-import automorphic_numbers
 import sys
 
+
+#********** KAPREKAR CONSTANT GENERATOR ********#
 class Kaprekar(QWidget):
     def __init__(self):
         super().__init__()
@@ -12,7 +13,7 @@ class Kaprekar(QWidget):
         self.setLayout(QVBoxLayout())
 
         self.setWindowTitle("Kaprekar's Constant")
-
+        # self.setGeometry(200, 200, 400, 400)
         self.intro_label = QLabel("\nFind out why 6174\nis a special number.\n", self)
         self.intro_label.setAlignment(Qt.AlignCenter)
         self.intro_label.setStyleSheet("QLabel"
@@ -250,6 +251,7 @@ class PrimeNumGen(QWidget):
             else:
                 self.label.setText("The box cannot be empty. Enter a number ")
 
+
 #******** AUTOMORPHIC NUMBER GENERATOR ********#
 ERROR_MSG = "ERROR"
 
@@ -267,6 +269,7 @@ class AutoMorphGen(QMainWindow):
         self._create_display_input()
         self._create_buttons()
         self._connect_signals()
+
 
     def _create_display_input(self):
         self.display_input1 = QLineEdit()
@@ -318,7 +321,7 @@ class AutoMorphGen(QMainWindow):
             self.clear_display_input()
 
         n = self.show_display_input_text() + n_more
-        self.set_display_input_tex(n)
+        self.set_display_input_text(n)
 
     def _connect_signals(self):
         for btn_text, btn in self.buttons.items():
@@ -355,7 +358,7 @@ class MainWindow(QMainWindow):
         layout = QVBoxLayout()
 
         self.setWindowTitle("Cool Math Tricks")
-
+        self.setGeometry(200, 200, 400, 400)
         self.title = QLabel('Select a math trick to start:', self)
         self.title.setAlignment(Qt.AlignCenter)
         layout.addWidget(self.title)
