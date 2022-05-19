@@ -221,12 +221,6 @@ class Kaprekar(QWidget):
 
         if self.number == 6174:
             self.count += 1
-            self.number_box.setStyleSheet(f'''
-                {theme.border}
-                background: white;
-                color: {theme.theme};
-                font: 36px;
-            ''')
 
         if self.count < 4:
             self.instructions.setText('Repeat these steps until\nyou notice a pattern.')
