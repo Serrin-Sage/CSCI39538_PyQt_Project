@@ -4,143 +4,245 @@ from PyQt5.QtCore import *
 from functools import partial
 import sys
 
-
-#********** KAPREKAR CONSTANT GENERATOR ********#
+from theme import Theme
+#********** KAPREKAR'S CONSTANT ********#
 class Kaprekar(QWidget):
     def __init__(self):
         super().__init__()
 
+        theme = Theme()
+
+        self.count = 0
+
         self.setLayout(QVBoxLayout())
 
         self.setWindowTitle("Kaprekar's Constant")
-        # self.setGeometry(200, 200, 400, 400)
-        self.intro_label = QLabel("\nFind out why 6174\nis a special number.\n", self)
-        self.intro_label.setAlignment(Qt.AlignCenter)
-        self.intro_label.setStyleSheet("QLabel"
-            "{"
-                "border: 2px solid black;"
-                "background: white;"
-            "}"
+
+        self.step_label   = QLabel('STEP ONE')
+        self.instructions = QLabel('Enter a 4-digit number\nwith 2 unique digits.')
+        self.entry_box    = QLineEdit()
+        self.number_box   = QLabel()
+        self.button       = QPushButton('Enter')
+
+        self.calculation    = QVBoxLayout()
+        self.entry_row      = QHBoxLayout()
+        self.decreasing_row = QHBoxLayout()
+        self.increasing_row = QHBoxLayout()
+
+        self.decreasing_box   = QLabel()
+        self.increasing_box   = QLabel()
+        self.decreasing_label = QLabel('decreasing')
+        self.increasing_label = QLabel('increasing')
+
+        self.number_box      .hide()
+        self.decreasing_label.hide()
+        self.increasing_label.hide()
+
+        self.layout().addWidget(self.step_label)
+        self.layout().addWidget(self.instructions)
+        self.layout().addLayout(self.calculation)
+        self.layout().addLayout(self.entry_row)
+
+        self.entry_row.addWidget(self.entry_box)
+        self.entry_row.addWidget(self.number_box)
+        self.entry_row.addWidget(self.button)
+
+        self.decreasing_row.addWidget(self.decreasing_box)
+        self.increasing_row.addWidget(self.increasing_box)
+        self.decreasing_row.addWidget(self.decreasing_label)
+        self.increasing_row.addWidget(self.increasing_label)
+
+        self.calculation.addLayout(self.decreasing_row)
+        self.calculation.addLayout(self.increasing_row)
+
+        self               .setFixedHeight(350)
+        self.instructions  .setFixedHeight(80)
+
+        self               .setFixedWidth(350)
+        self.entry_box     .setFixedWidth(130)
+        self.number_box    .setFixedWidth(130)
+        self.button        .setFixedWidth(170)
+        self.decreasing_box.setFixedWidth(118)
+        self.increasing_box.setFixedWidth(118)
+
+        self.step_label    .setAlignment(Qt.AlignLeft)
+        self.instructions  .setAlignment(Qt.AlignCenter)
+        self.entry_box     .setAlignment(Qt.AlignRight)
+        self.number_box    .setAlignment(Qt.AlignRight)
+        self.decreasing_box.setAlignment(Qt.AlignRight)
+        self.increasing_box.setAlignment(Qt.AlignRight)
+
+        self.button.clicked.connect(self.enter)
+
+        self.setStyleSheet(f'''
+            background: {theme.theme};
+            font: 24px;
+        ''')
+        self.step_label.setStyleSheet(f'''
+            background: {theme.theme};
+            font: bold 36px;
+            color: white;
+        '''
         )
-        self.layout().addWidget(self.intro_label)
+        self.instructions.setStyleSheet(f'''
+            {theme.border}
+            background: {theme.accent};
+            color: {theme.theme_dark};
+        ''')
+        self.decreasing_box.setStyleSheet(f'''
+            color: white;
+            font: 36px;
+        ''')
+        self.increasing_box.setStyleSheet(f'''
+            color: white;
+            font: 36px;
+        ''')
+        self.decreasing_label.setStyleSheet(f'''
+            color: {theme.accent};
+            font: 20px;
+        ''')
+        self.increasing_label.setStyleSheet(f'''
+            color: {theme.accent};
+            font: 20px;
+        ''')
+        self.entry_box.setStyleSheet(f'''
+            {theme.border}
+            background: {theme.accent};
+            color: {theme.theme};
+            font: 36px;
+        ''')
+        self.number_box.setStyleSheet(f'''
+            {theme.border}
+            background: {theme.accent};
+            color: {theme.theme};
+            font: 36px;
+        ''')
+        self.button.setStyleSheet(
+            'QPushButton {' f'''
+                {theme.border}
+                padding: 5px 10px;
+                background: {theme.theme};
+                color: white;
+                text-transform: uppercase;
+            ''''}'
+            'QPushButton::hover {' f'''
+                {theme.border_inverse}
+                background: {theme.theme};
+            ''''}'
+            'QPushButton::pressed {' f'''
+                {theme.border_inverse}
+                background: {theme.theme_dark};
+            ''''}'
+        )
 
-        self.intro_button = QPushButton('Start')
-        self.intro_button.clicked.connect(self.start)
-        self.layout().addWidget(self.intro_button)
-
-    def start(self):
-        self.intro_button.hide()
-
-        self.entry_label = QLabel('Think of a four-digit number:', self)
-        self.layout().addWidget(self.entry_label)
-
-        self.entry_box = QLineEdit()
-        self.layout().addWidget(self.entry_box)
-
-        self.entry_button = QPushButton('Enter')
-        self.entry_button.clicked.connect(self.enter)
-        self.layout().addWidget(self.entry_button)
 
     def enter(self):
         entry = self.entry_box.displayText()
 
-        def threeRepeating():
+        def twoUnique():
             count = {}
-
             for digit in entry:
               if digit in count:
                 count[digit] += 1
                 if count[digit] > 2:
-                  return True
+                  return False
               else:
                 count[digit] = 1
-            return False
+            return True
 
-        if len(entry) == 4 and entry.isdigit():
-            color_black = QGraphicsColorizeEffect()
-            color_black.setColor(Qt.black)
-            self.entry_label.setGraphicsEffect(color_black)
-            if threeRepeating():
-                self.entry_label.setText(f'Three digits cannot repeat.')
-                color_red = QGraphicsColorizeEffect()
-                color_red.setColor(Qt.red)
-                self.entry_label.setGraphicsEffect(color_red)
-            else:
-                self.entry_box.hide()
-                self.entry_button.hide()
-                self.number = int(self.entry_box.displayText())
-                self.entry_label.setAlignment(Qt.AlignRight)
-                self.entry_label.setText(f'Starting number = {self.number}')
-
-                self.cycle()
+        if len(entry) == 4 and entry.isdigit() and twoUnique():
+            self.number = int(self.entry_box.displayText())
+            self.entry_box.hide()
+            self.number_box.show()
+            self.cycle()
 
     def cycle(self):
-        self.decreasing_button = QPushButton(f'Sort {self.number} in decreasing order')
-        self.decreasing_button.clicked.connect(self.sortDecreasing)
-        self.layout().addWidget(self.decreasing_button)
+        instructions = 'Arrange digits in\ndecreasing order.'
+
+        self.notice = 'Have you noticed yet?'
+
+        if self.count > 3:
+            self.notice = "Kaprekar's Constant:\n6174"
+
+        self.step_label  .setText('STEP TWO')
+        self.instructions.setText(instructions if self.count < 2 else self.notice)
+        self.number_box  .setText(f'{self.number}')
+        self.button      .setText('Sort')
+
+        self.decreasing_label.hide()
+        self.increasing_label.hide()
+
+        self.decreasing_box.clear()
+        self.increasing_box.clear()
+
+        self.button.clicked.disconnect()
+        self.button.clicked.connect(self.sortDecreasing)
 
     def sortDecreasing(self):
-        self.decreasing_button.hide()
+        instructions = 'Arrange digits in\nincreasing order.'
 
         self.decreasing = int(''.join([str(digit) for digit in sorted([int(digit) for digit in str(self.number)], reverse=True)]))
 
-        text = f'   {self.decreasing}'
-        label = QLabel(text, self)
-        label.setAlignment(Qt.AlignRight)
-        self.layout().addWidget(label)
+        self.step_label    .setText('STEP THREE')
+        self.instructions  .setText(instructions if self.count < 2 else self.notice)
+        self.decreasing_box.setText(f'{self.decreasing}')
 
-        self.increasing_button = QPushButton(f'Sort {self.number} in increasing order')
-        self.increasing_button.clicked.connect(self.sortIncreasing)
-        self.layout().addWidget(self.increasing_button)
+        self.decreasing_label.show()
+
+        self.button.clicked.disconnect()
+        self.button.clicked.connect(self.sortIncreasing)
 
     def sortIncreasing(self):
-        self.increasing_button.hide()
+        instructions = 'Subtract this number\nfrom the previous one.'
 
         self.increasing = int(str(self.decreasing)[::-1])
 
-        text = '-  ' + str(self.increasing).rjust(4, ' ')
-        label = QLabel(text, self)
-        label.setAlignment(Qt.AlignRight)
-        self.layout().addWidget(label)
+        self.number_box.clear()
 
-        self.subtract_button = QPushButton(f'Subtract: {self.decreasing} - {self.increasing}')
-        self.subtract_button.clicked.connect(self.subtract)
-        self.layout().addWidget(self.subtract_button)
+        self.step_label    .setText('STEP FOUR')
+        self.instructions  .setText(instructions if self.count < 2 else self.notice)
+        self.increasing_box.setText(f'- {self.increasing}')
+        self.button        .setText('Subtract')
+
+        self.increasing_label.show()
+
+        self.button.clicked.disconnect()
+        self.button.clicked.connect(self.subtract)
 
     def subtract(self):
-        self.subtract_button.hide()
-
         self.number = self.decreasing - self.increasing
 
-        text = f'Resulting number = {self.number}'
-        label = QLabel(text)
-        label.setAlignment(Qt.AlignRight)
+        self.step_label.setText('STEP ONE (again)')
+        self.number_box.setText(f'{self.number}')
+        self.button    .setText('Repeat')
+
+        self.button.clicked.disconnect()
+        self.button.clicked.connect(self.cycle)
 
         if self.number == 6174:
-            label.setStyleSheet("QLabel"
-                "{"
-                    "border: 2px solid black;"
-                    "background: white;"
-                "}"
-            )
-            self.layout().addWidget(label)
-        else:
-            self.layout().addWidget(label)
-            self.cycle()
+            self.count += 1
+            self.number_box.setStyleSheet(f'''
+                {theme.border}
+                background: white;
+                color: {theme.theme};
+                font: 36px;
+            ''')
+
+        if self.count < 4:
+            self.instructions.setText('Repeat these steps until\nyou notice a pattern.')
 
 #********** PRIME NUMBER GENERATOR ********#
 class PrimeNumGen(QWidget):
     def __init__(self):
         super().__init__()
 
+        theme = Theme()
+
         # Layout
         self.setLayout(QVBoxLayout())
 
         # Title
         self.setWindowTitle("Prime Number Generator")
-
-        # setting geometry
-        self.setGeometry(200, 200, 400, 400)
 
         # font
         font = QFont('Helvetica', 14)
@@ -149,207 +251,150 @@ class PrimeNumGen(QWidget):
         font.setUnderline(True)
 
         # Label
-        self.label = QLabel("Enter a number ", self)
-        # setting geometry to the label
-        self.label.setGeometry(40, 85, 260, 60)
-        # making the info label multi line
-        self.label.setWordWrap(True)
+        self.instructions = theme.instructions('Enter a number')
 
-        # setting font to the head
-        self.label.setFont(font)
-        # setting alignment of the head
-        self.label.setAlignment(Qt.AlignCenter)
-        # setting color effect to the head
-        color = QGraphicsColorizeEffect(self)
-        color.setColor(Qt.darkCyan)
+        self.setFixedWidth(350)
+        self.setFixedHeight(350)
 
-        # setting font and alignment
-        self.label.setFont(QFont('Helvetica', 13))
-        self.label.setAlignment(Qt.AlignCenter)
+        self.layout().addWidget(self.instructions)
 
-        # setting style sheet
-        self.label.setStyleSheet("QLabel"
-                                 "{"
-                                 "border : 2px solid black;"
-                                 "background : lightgrey;"
-                                 "}")
+        self.setStyleSheet(f'''
+            background: {theme.theme_lighter};
+        ''')
 
-        self.layout().addWidget(self.label)
         # Entry Box
-        entry_box = QLineEdit()
-        entry_box.setObjectName("EntryBox")
-        self.layout().addWidget(entry_box)
+        self.entry_box  = theme.entry_box()
+        self.button     = theme.button('')
 
-        # Buttons
+        self.entry_row = QHBoxLayout()
+        self.entry_row.addWidget(self.entry_box)
+        self.entry_row.addWidget(self.button)
 
-        generate_btn = QPushButton(
-            "Generate!", clicked=lambda: primeNumberGenerator())
-        self.layout().addWidget(generate_btn)
+        self.layout().addLayout(self.entry_row)
 
-        # reset button to reset the game, adding action to reset button
-        reset_game = QPushButton(
-            "Reset", clicked=lambda: reset_action(self))
-        self.layout().addWidget(reset_game)
-
-        # setting geometry to the push button
-        reset_game.setGeometry(175, 280, 100, 40)
-
-        # setting color effect
-        color_red = QGraphicsColorizeEffect()
-        color_red.setColor(Qt.red)
-        reset_game.setGraphicsEffect(color_red)
-
-        color_green = QGraphicsColorizeEffect()
-        color_green.setColor(Qt.green)
-        generate_btn.setGraphicsEffect(color_green)
-
-        # Warning/Answer
-        warning_label = QLabel("")
-        warning_label.setFont(QFont('Helvetica', 24))
-        self.layout().addWidget(warning_label)
+        self.entry_box.setFixedWidth(130)
+        self.button   .setFixedWidth(170)
 
         self.listWidget = QListWidget()
+        self.listWidget.setStyleSheet(f'''
+            background: {theme.theme};
+            color: {theme.accent};
+            font: 24px;
+        ''')
+        self.layout().addWidget(self.listWidget)
 
-        def reset_action(self):
+        self.entry_box.returnPressed.connect(self.enter)
+        self.button.clicked.connect(self.enter)
 
-            self.label.setStyleSheet("QLabel"
-                                     "{"
-                                     "border : 2px solid black;"
-                                     "background : lightgrey;"
-                                     "}")
+        self.reset()
 
-            # setting text to the info label
-            self.label.setText("Reset...Enter a number")
+    def enter(self):
+        entry = self.entry_box.displayText()
 
-            # empty output box
-            self.listWidget.clear()
+        self.button.setText('RESET')
 
-            # clear entry box
-            entry_box.clear()
+        self.button.clicked.disconnect()
+        self.button.clicked.connect(self.reset)
 
-        def primeNumberGenerator():
+        if entry != "" and entry.isdigit():
+            for x in range(2, int(entry) + 1):
+                is_prime = True
+                for y in range(2, x):
+                    if x % y == 0:
+                        is_prime = False
+                if is_prime:
+                    self.listWidget.addItem(str(x))
 
-            entry = entry_box.displayText()
-            # making label green
-            self.label.setStyleSheet("QLabel"
-                                     "{"
-                                     "border : 2px solid black;"
-                                     "background : lightgrey;"
-                                     "}")
+    def reset(self):
+        self.instructions.setText('Enter a number to find\nall primes below it.')
+        self.listWidget.clear()
+        self.entry_box.clear()
 
-            if entry != "":
-                for x in range(2, int(entry) + 1):
-                    is_prime = True
-                    for y in range(2, x):
-                        if x % y == 0:
-                            is_prime = False
-                    if is_prime:
-                        # print(x)
-                        self.listWidget.addItem(str(x))
-                        self.layout().addWidget(self.listWidget)
-
-            else:
-                self.label.setText("The box cannot be empty. Enter a number ")
-
+        self.button.setText('ENTER')
+        self.button.clicked.disconnect()
+        self.button.clicked.connect(self.enter)
 
 #******** AUTOMORPHIC NUMBER GENERATOR ********#
-ERROR_MSG = "ERROR"
+class AutoMorphGen(QWidget):
 
-class AutoMorphGen(QMainWindow):
-
-    def __init__(self, model):
+    def __init__(self):
         super().__init__()
-        self._model = model
+        theme = Theme()
+
+        self.setLayout(QVBoxLayout())
+
         self.setWindowTitle("Automorphic Numbers")
-        self.setGeometry(200, 200, 400, 400)
-        self.general_layout = QVBoxLayout()
-        self._central_widget = QWidget(self)
-        self.setCentralWidget(self._central_widget)
-        self._central_widget.setLayout(self.general_layout)
-        self._create_display_input()
-        self._create_buttons()
-        self._connect_signals()
 
+        self.instructions = theme.instructions('Enter a number to see if\nits square ends with itself.')
 
-    def _create_display_input(self):
-        self.display_input1 = QLineEdit()
-        self.display_input1.setGeometry(100, 100, 340, 350)
-        self.display_input1.setAlignment(Qt.AlignLeft)
-        self.general_layout.addWidget(self.display_input1)
+        self.entry_box = theme.entry_box()
 
-    def _create_buttons(self):
         self.buttons = {}
-        buttons_layout = QGridLayout()
 
-        buttons = {"1": (0, 0),
-                   "2": (0, 1),
-                   "3": (0, 2),
-                   "4": (0, 3),
-                   "5": (0, 4),
-                   "6": (1, 0),
-                   "7": (1, 1),
-                   "8": (1, 2),
-                   "9": (1, 3),
-                   "0": (1, 4),
-                   "Enter": (2, 0),
-                   "Clear": (2, 1),
+        self.display = QLabel()
+        self.display.setAlignment(Qt.AlignCenter)
+
+        keypad = QGridLayout()
+
+        buttons = {"1": (2, 0),
+                   "2": (2, 1),
+                   "3": (2, 2),
+                   "4": (1, 0),
+                   "5": (1, 1),
+                   "6": (1, 2),
+                   "7": (0, 0),
+                   "8": (0, 1),
+                   "9": (0, 2),
+                   "0": (3, 1),
+                   "Square": (3, 2),
+                   "Clear": (3, 0),
                    }
 
-        for btn_text, pos in buttons.items():
-            self.buttons[btn_text] = QPushButton(btn_text)
-            self.buttons[btn_text].setFixedSize(45, 45)
-            buttons_layout.addWidget(self.buttons[btn_text], pos[0], pos[1])
+        self.layout().addWidget(self.instructions)
+        self.layout().addWidget(self.entry_box)
+        self.layout().addWidget(self.display)
+        self.layout().addLayout(keypad)
 
-        self.general_layout.addLayout(buttons_layout)
+        def build_num(text):
+            self.entry_box.setText(self.entry_box.displayText() + text)
 
-    def set_display_input_text(self, text):
-        self.display_input1.setText(text)
-        self.display_input1.setFocus()
+        for text, pos in buttons.items():
+            self.buttons[text] = theme.button(text)
+            if text not in {"Square", "Clear"}:
+                self.buttons[text].clicked.connect(partial(build_num, text))
+            keypad.addWidget(self.buttons[text], pos[0], pos[1])
 
-    def show_display_input_text(self):
-        return self.display_input1.text()
+        self.entry_box.returnPressed.connect(self.square)
+        self.buttons["Square"].clicked.connect(self.square)
+        self.buttons["Clear"].clicked.connect(self.clear)
 
-    def clear_display_input(self):
-        self.set_display_input_text("")
+        self.setStyleSheet(f'''
+            background: {theme.theme_lighter};
+        ''')
+        self.display.setStyleSheet(f'''
+            background: {theme.theme_dark};
+            color: white;
+            font: 24px;
+        ''')
 
-    def _calculate(self):
-        result = self._model(n = self.show_display_input_text())
-        self.set_display_input_text(result)
+    def clear(self):
+        self.entry_box.clear()
+        self.display.clear()
 
-    def _build_num(self, n_more):
-        if self.show_display_input_text() == ERROR_MSG:
-            self.clear_display_input()
-
-        n = self.show_display_input_text() + n_more
-        self.set_display_input_text(n)
-
-    def _connect_signals(self):
-        for btn_text, btn in self.buttons.items():
-            if btn_text not in {"Enter", "Clear"}:
-                btn.clicked.connect(partial(self._build_num, btn_text))
-
-        self.buttons["Enter"].clicked.connect(self._calculate)
-        self.display_input1.returnPressed.connect(self._calculate)
-        self.buttons["Clear"].clicked.connect(self.clear_display_input)
-
-def automorphic_number_calculate(n):
-
-    try:
-        square_num = int(n) * int(n)
-        num_length = len(str(n))
-        last_digits = (str(square_num)[-num_length:])
-        if last_digits == n:
-            result = f"Automorphic number. {n} squared is {square_num}."
-        else:
-            result = f"Not an automorphic number. {n} squared is {square_num}."
-    except Exception:
-        result = ERROR_MSG
-    return result
-
+    def square(self):
+        if self.entry_box.displayText().isdigit():
+            entry = int(self.entry_box.displayText())
+            square = entry * entry
+            end = int(str(square)[-len(str(entry)):])
+            isAutomorphic = end == entry
+            self.display.setText('Automorphic!' if isAutomorphic else 'Not automorphic')
+            self.entry_box.setText(f'{square}')
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+
+        theme = Theme()
 
         widget = QWidget(self)
 
@@ -358,18 +403,21 @@ class MainWindow(QMainWindow):
         layout = QVBoxLayout()
 
         self.setWindowTitle("Cool Math Tricks")
-        self.setGeometry(200, 200, 400, 400)
-        self.title = QLabel('Select a math trick to start:', self)
-        self.title.setAlignment(Qt.AlignCenter)
-        layout.addWidget(self.title)
 
         self.window1 = PrimeNumGen()
-        self.window2 = AutoMorphGen(automorphic_number_calculate)
+        self.window2 = AutoMorphGen()
         self.window3 = Kaprekar()
 
-        button1 = QPushButton("Prime Number\nGenerator")
-        button2 = QPushButton("AutoMorphic Number\nGenerator")
-        button3 = QPushButton("Kaprekar's Constant")
+        self.instructions = theme.instructions('Select a math trick to start!')
+
+        self.setFixedWidth(350)
+        self.setFixedHeight(350)
+
+        layout.addWidget(self.instructions)
+
+        button1 = theme.button("Prime Number Generator")
+        button2 = theme.button("AutoMorphic Numbers")
+        button3 = theme.button("Kaprekar's Constant")
 
         button1.clicked.connect(lambda checked: self.toggle_window(self.window1))
         button2.clicked.connect(lambda checked: self.toggle_window(self.window2))
@@ -380,6 +428,11 @@ class MainWindow(QMainWindow):
         layout.addWidget(button3)
 
         widget.setLayout(layout)
+
+        self.setStyleSheet(f'''
+            background: {theme.theme_lighter};
+            font: 24px;
+        ''')
 
     def toggle_window(self, window):
         if window.isVisible():

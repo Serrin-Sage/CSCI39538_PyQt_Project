@@ -5,131 +5,91 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 import sys
 
+from theme import Theme
 
-class MainWindow(qtw.QWidget):
+class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
 
+        self.show()
+
+        theme = Theme()
+
         # Layout
-        self.setLayout(qtw.QVBoxLayout())
+        self.setLayout(QVBoxLayout())
 
         # Title
         self.setWindowTitle("Prime Number Generator")
 
-        # setting geometry
-        self.setGeometry(100, 100, 340, 350)
-
-        # showing all the widgets
-        self.show()
-
         # font
-        font = qtg.QFont('Times', 14)
+        font = QFont('Helvetica', 14)
         font.setBold(True)
         font.setItalic(True)
         font.setUnderline(True)
 
         # Label
-        self.label = qtw.QLabel("Enter a number ", self)
-        # setting geometry to the label
-        self.label.setGeometry(40, 85, 260, 60)
-        # making the info label multi line
-        self.label.setWordWrap(True)
+        self.instructions = theme.instructions('Enter a number')
 
-        # setting font to the head
-        self.label.setFont(font)
-        # setting alignment of the head
-        self.label.setAlignment(Qt.AlignCenter)
-        # setting color effect to the head
-        color = QGraphicsColorizeEffect(self)
-        color.setColor(Qt.darkCyan)
+        self.setFixedWidth(350)
+        self.setFixedHeight(350)
 
-        # setting font and alignment
-        self.label.setFont(qtg.QFont('Times', 13))
-        self.label.setAlignment(Qt.AlignCenter)
+        self.layout().addWidget(self.instructions)
 
-        # setting style sheet
-        self.label.setStyleSheet("QLabel"
-                                 "{"
-                                 "border : 2px solid black;"
-                                 "background : lightgrey;"
-                                 "}")
+        self.setStyleSheet(f'''
+            background: {theme.theme_lighter};
+        ''')
 
-        self.layout().addWidget(self.label)
         # Entry Box
-        entry_box = qtw.QLineEdit()
-        entry_box.setObjectName("EntryBox")
-        self.layout().addWidget(entry_box)
+        self.entry_box  = theme.entry_box()
+        self.button     = theme.button('')
 
-        # Buttons
+        self.entry_row = QHBoxLayout()
+        self.entry_row.addWidget(self.entry_box)
+        self.entry_row.addWidget(self.button)
 
-        generate_btn = qtw.QPushButton(
-            "Generate!", clicked=lambda: primeNumberGenerator())
-        self.layout().addWidget(generate_btn)
+        self.layout().addLayout(self.entry_row)
 
-        # reset button to reset the game, adding action to reset button
-        reset_game = qtw.QPushButton(
-            "Reset", clicked=lambda: reset_action(self))
-        self.layout().addWidget(reset_game)
+        self.entry_box.setFixedWidth(130)
+        self.button   .setFixedWidth(170)
 
-        # setting geometry to the push button
-        reset_game.setGeometry(175, 280, 100, 40)
+        self.listWidget = QListWidget()
+        self.listWidget.setStyleSheet(f'''
+            background: {theme.theme};
+            color: {theme.accent};
+            font: 24px;
+        ''')
+        self.layout().addWidget(self.listWidget)
 
-        # setting color effect
-        color_red = QGraphicsColorizeEffect()
-        color_red.setColor(Qt.red)
-        reset_game.setGraphicsEffect(color_red)
+        self.entry_box.returnPressed.connect(self.enter)
+        self.button.clicked.connect(self.enter)
 
-        color_green = QGraphicsColorizeEffect()
-        color_green.setColor(Qt.green)
-        generate_btn.setGraphicsEffect(color_green)
+        self.reset()
 
-        # Warning/Answer
-        warning_label = qtw.QLabel("")
-        warning_label.setFont(qtg.QFont('Helvetica', 24))
-        self.layout().addWidget(warning_label)
+    def enter(self):
+        entry = self.entry_box.displayText()
 
-        self.listWidget = qtw.QListWidget()
+        self.button.setText('RESET')
 
-        def reset_action(self):
+        self.button.clicked.disconnect()
+        self.button.clicked.connect(self.reset)
 
-            self.label.setStyleSheet("QLabel"
-                                     "{"
-                                     "border : 2px solid black;"
-                                     "background : lightgrey;"
-                                     "}")
+        if entry != "" and entry.isdigit():
+            for x in range(2, int(entry) + 1):
+                is_prime = True
+                for y in range(2, x):
+                    if x % y == 0:
+                        is_prime = False
+                if is_prime:
+                    self.listWidget.addItem(str(x))
 
-            # setting text to the info label
-            self.label.setText("Reset...Enter a number")
+    def reset(self):
+        self.instructions.setText('Enter a number to find\nall primes below it.')
+        self.listWidget.clear()
+        self.entry_box.clear()
 
-            # empty output box
-            self.listWidget.clear()
-
-            # clear entry box
-            entry_box.clear()
-
-        def primeNumberGenerator():
-
-            entry = entry_box.displayText()
-            # making label green
-            self.label.setStyleSheet("QLabel"
-                                     "{"
-                                     "border : 2px solid black;"
-                                     "background : lightgrey;"
-                                     "}")
-
-            if entry != "":
-                for x in range(2, int(entry)+1):
-                    is_prime = True
-                    for y in range(2, x):
-                        if x % y == 0:
-                            is_prime = False
-                    if is_prime:
-                        # print(x)
-                        self.listWidget.addItem(str(x))
-                        self.layout().addWidget(self.listWidget)
-
-            else:
-                self.label.setText("The box cannot be empty. Enter a number ")
+        self.button.setText('ENTER')
+        self.button.clicked.disconnect()
+        self.button.clicked.connect(self.enter)
 
 
 if __name__ == "__main__":
